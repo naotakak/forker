@@ -2,28 +2,26 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <time.h>
+#include <sys/wait.h>
 
 int main() {
-  srand(time(NULL));
-  int f;
   printf("Before fork yurddddd\n");
-  f = fork();
-  int r = rand() % (20 + 1 - 5) + 5;
-  int a = rand() % (20 + 1 - 5) + 5;
-  if (f == 0) {
-    int c = fork();
+  fork();
+  int c = fork();
+  if (!c) {
     printf("Child PID: %d\n", getpid());
-    if (c) {
-      sleep(r);
-    }
-    else {
-      sleep(a);
-    }
-    printf("Child %d done\n", getpid());
+    srand(time(NULL));
+    int r = rand() % (20 + 1 - 5) + 5;
+    sleep(r);
+    printf("Child %d done in %d seconds\n", getpid(),r);
+    exit(r);
   }
-
-    int child = wait();
-    printf("Child %d exited, slept for xx seconds\n", child);
+  else{
+    int a;
+    int pid = wait(&a);
+    printf("Received child exit signal. TIME: %d\n", WEXITSTATUS(a));
+    printf("Done! status: %d\n", pid);
+  }
 
   return 0;
 }
