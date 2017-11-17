@@ -6,22 +6,33 @@
 
 int main() {
   printf("Before fork yurddddd\n");
-  fork();
+  printf("Parent PID: %d\n", getpid());
   int c = fork();
   if (!c) {
+    //fork();
     printf("Child PID: %d\n", getpid());
-    srand(time(NULL));
-    int r = rand() % (20 + 1 - 5) + 5;
+    int r;
+    srand(getpid());
+    r = (rand() % 16) + 5;
     sleep(r);
     printf("Child %d done in %d seconds\n", getpid(),r);
-    exit(r);
+    return r;
   }
   else{
+    int b = fork();
+    if (!b) {
+      printf("Child PID: %d\n", getpid());
+      int r;
+      srand(getpid());
+      r = (rand() % 16) + 5;
+      sleep(r);
+      printf("Child %d done in %d seconds\n", getpid(), r);
+      return r;
+    }
     int a;
-    int pid = wait(&a);
+    wait(&a);
     printf("Received child exit signal. TIME: %d\n", WEXITSTATUS(a));
-    printf("Done! status: %d\n", pid);
+    exit(0);
   }
-
   return 0;
 }
